@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Map Segmentation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+      }
+
+      #map {
+        height: 75vh;
+        margin-bottom: 20px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Interactive Map Segmentation</h1>
+      <div id="map"></div>
+      <form action="/capture_map" method="POST">
+        <input type="hidden" id="zoom" name="zoom" />
+        <input type="hidden" id="center_lat" name="center_lat" />
+        <input type="hidden" id="center_lng" name="center_lng" />
+        <button type="submit" class="btn btn-primary">Capture Map</button>
+      </form>
+      <form
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+        class="mt-4"
+      >
+        <input type="file" name="file" class="form-control" required />
+        <button type="submit" class="btn btn-success mt-2">
+          Upload and Predict
+        </button>
+      </form>
+    </div>
+    <script>
+      const map = L.map("map").setView([23.4320022, 79.2658284], 5);
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "Esri" }
+      ).addTo(map);
+      const zoomInput = document.getElementById("zoom");
+      const centerLatInput = document.getElementById("center_lat");
+      const centerLngInput = document.getElementById("center_lng");
+      map.on("moveend", () => {
+        const center = map.getCenter();
+        zoomInput.value = map.getZoom();
+        centerLatInput.value = center.lat;
+        centerLngInput.value = center.lng;
+      });
+    </script>
+  </body>
+</html>
